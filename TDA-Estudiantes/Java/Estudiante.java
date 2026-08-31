@@ -11,6 +11,7 @@ public class Estudiante {
     private double[] notas;
     private int cantidadNotas;
 
+    // Constructor usando LocalDate
     public Estudiante(String cedula, String nombres,
                       String apellidos, LocalDate fechaNacimiento) {
 
@@ -21,6 +22,19 @@ public class Estudiante {
 
         notas = new double[7];
         cantidadNotas = 0;
+    }
+
+    // Constructor compatible con PruebaJosue.java
+    public Estudiante(String cedula, String nombres,
+                      String apellidos, int dia,
+                      int mes, int anio) {
+
+        this(
+            cedula,
+            nombres,
+            apellidos,
+            LocalDate.of(anio, mes, dia)
+        );
     }
 
     public int calcularEdad() {
@@ -39,6 +53,23 @@ public class Estudiante {
         }
 
         return false;
+    }
+
+    // Método necesario para GestorEstudiantes y PruebaJosue
+    public void mostrarDatos() {
+        System.out.println("Cedula: " + cedula);
+        System.out.println("Nombres: " + nombres);
+        System.out.println("Apellidos: " + apellidos);
+        System.out.println(
+                "Fecha de nacimiento: " + fechaNacimiento
+        );
+        System.out.println(
+                "Edad: " + calcularEdad()
+        );
+        System.out.println(
+                "Cantidad de notas: "
+                + cantidadNotas + "/7"
+        );
     }
 
     public String getCedula() {
@@ -81,4 +112,3 @@ public class Estudiante {
         this.fechaNacimiento = fechaNacimiento;
     }
 }
-
