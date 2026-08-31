@@ -8,12 +8,10 @@ public class Estudiante {
     private String cedula;
     private String nombres;
     private String apellidos;
-
     private int diaNacimiento;
     private int mesNacimiento;
     private int anioNacimiento;
 
-    // Vector estático de máximo siete calificaciones.
     private final double[] notas;
     private int cantidadNotas;
 
@@ -49,25 +47,18 @@ public class Estudiante {
             String cedula,
             String nombres,
             String apellidos,
-            int diaNacimiento,
-            int mesNacimiento,
-            int anioNacimiento) {
+            int dia,
+            int mes,
+            int anio) {
 
-        validarDatos(
-                cedula,
-                nombres,
-                apellidos,
-                diaNacimiento,
-                mesNacimiento,
-                anioNacimiento
-        );
+        validarDatos(cedula, nombres, apellidos, dia, mes, anio);
 
         this.cedula = cedula.trim();
         this.nombres = nombres.trim();
         this.apellidos = apellidos.trim();
-        this.diaNacimiento = diaNacimiento;
-        this.mesNacimiento = mesNacimiento;
-        this.anioNacimiento = anioNacimiento;
+        this.diaNacimiento = dia;
+        this.mesNacimiento = mes;
+        this.anioNacimiento = anio;
     }
 
     private void validarDatos(
@@ -79,18 +70,15 @@ public class Estudiante {
             int anio) {
 
         if (cedula == null || cedula.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "La cédula no puede estar vacía.");
+            throw new IllegalArgumentException("Cédula vacía.");
         }
 
         if (nombres == null || nombres.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Los nombres no pueden estar vacíos.");
+            throw new IllegalArgumentException("Nombres vacíos.");
         }
 
         if (apellidos == null || apellidos.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Los apellidos no pueden estar vacíos.");
+            throw new IllegalArgumentException("Apellidos vacíos.");
         }
 
         try {
@@ -98,12 +86,13 @@ public class Estudiante {
 
             if (fecha.isAfter(LocalDate.now())) {
                 throw new IllegalArgumentException(
-                        "La fecha no puede ser futura.");
+                        "La fecha no puede ser futura."
+                );
             }
-
         } catch (DateTimeException error) {
             throw new IllegalArgumentException(
-                    "La fecha de nacimiento no es válida.");
+                    "Fecha de nacimiento inválida."
+            );
         }
     }
 
@@ -115,18 +104,9 @@ public class Estudiante {
         );
 
         LocalDate actual = LocalDate.now();
-
         int edad = actual.getYear() - nacimiento.getYear();
 
-        boolean noHaCumplido =
-                actual.getMonthValue()
-                        < nacimiento.getMonthValue()
-                || (actual.getMonthValue()
-                        == nacimiento.getMonthValue()
-                && actual.getDayOfMonth()
-                        < nacimiento.getDayOfMonth());
-
-        if (noHaCumplido) {
+        if (actual.getDayOfYear() < nacimiento.getDayOfYear()) {
             edad--;
         }
 
@@ -140,15 +120,90 @@ public class Estudiante {
 
         System.out.println(
                 "Fecha de nacimiento: "
-                        + diaNacimiento + "/"
-                        + mesNacimiento + "/"
-                        + anioNacimiento);
+                + diaNacimiento + "/"
+                + mesNacimiento + "/"
+                + anioNacimiento
+        );
 
         System.out.println("Edad: " + calcularEdad());
 
         System.out.println(
-                "Notas registradas: "
-                        + cantidadNotas + "/" + MAX_NOTAS);
+                "Cantidad de notas: "
+                + cantidadNotas + "/" + MAX_NOTAS
+        );
+    }
+
+    public boolean agregarNota(double nota) {
+        if (cantidadNotas >= MAX_NOTAS
+                || nota < 0
+                || nota > 10) {
+
+            return false;
+        }
+
+        notas[cantidadNotas] = nota;
+        cantidadNotas++;
+
+        return true;
+    }
+
+    public boolean modificarNota(int posicion, double nota) {
+        if (posicion < 0
+                || posicion >= cantidadNotas
+                || nota < 0
+                || nota > 10) {
+
+            return false;
+        }
+
+        notas[posicion] = nota;
+        return true;
+    }
+
+    public boolean eliminarNota(int posicion) {
+        if (posicion < 0 || posicion >= cantidadNotas) {
+            return false;
+        }
+
+        for (int i = posicion; i < cantidadNotas - 1; i++) {
+            notas[i] = notas[i + 1];
+        }
+
+        notas[cantidadNotas - 1] = 0;
+        cantidadNotas--;
+
+        return true;
+    }
+
+    public void mostrarNotas() {
+        if (cantidadNotas == 0) {
+            System.out.println(
+                    "No existen calificaciones registradas."
+            );
+            return;
+        }
+
+        for (int i = 0; i < cantidadNotas; i++) {
+            System.out.printf(
+                    "%d. %.2f%n",
+                    i + 1,
+                    notas[i]
+            );
+        }
+    }
+
+    public double calcularPromedio() {
+        if (cantidadNotas == 0) {
+            return 0;
+        }
+
+        double suma = 0;
+
+        for (int i = 0; i < cantidadNotas; i++) {
+            suma += notas[i];
+        }
+
+        return suma / cantidadNotas;
     }
 
     public String getCedula() {
